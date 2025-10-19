@@ -1,0 +1,4 @@
+<Bindings>
+  <Binding name="TOTEMIC_TOGGLE" description="TOTEMIC_TOGGLE_DESC" header="TOTEMIC">Totemic_Toggle()</Binding>
+  <Binding name="TOTEMIC_CAST_CURRENT" description="TOTEMIC_CAST_DESC">Totemic_CastCurrent()</Binding>
+</Bindings>

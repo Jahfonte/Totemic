@@ -1,0 +1,12 @@
+## Interface: 11200
+## Title: Totemic
+## Notes: Shaman totem set manager for Turtle WoW
+## Author: You
+## Version: 0.1.0
+## SavedVariables: TotemicDB
+
+Totemic_Compat.lua
+Core.lua
+UI.lua
+Minimap.lua
+Bindings.xml
