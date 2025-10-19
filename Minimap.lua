@@ -60,18 +60,14 @@ btn:SetScript("OnDragStart", function()
     if math.atan2 then
       ang = math.deg(math.atan2(dy, dx))
     else
-      if dx == 0 and dy == 0 then
-        ang = TotemicDB.options.minimap.angle or 45
+      local a
+      if dx == 0 then
+        if dy > 0 then a = math.pi/2 elseif dy < 0 then a = -math.pi/2 else a = 0 end
       else
-        local a
-        if dx == 0 then
-          if dy > 0 then a = math.pi/2 elseif dy < 0 then a = -math.pi/2 else a = 0 end
-        else
-          a = math.atan(dy/dx)
-          if dx < 0 then if dy >= 0 then a = a + math.pi else a = a - math.pi end end
-        end
-        ang = math.deg(a)
+        a = math.atan(dy/dx)
+        if dx < 0 then if dy >= 0 then a = a + math.pi else a = a - math.pi end end
       end
+      ang = math.deg(a)
     end
     local angle = ang
     if angle < 0 then angle = angle + 360 end
@@ -90,20 +86,7 @@ end)
 btn:SetScript("OnMouseUp", function()
   if this.isDragging then return end
   if this.wasDragging then this.wasDragging = nil; return end
-  local button = arg1 or "LeftButton"
-  if button == "LeftButton" then
-    if Totemic_Toggle then
-      Totemic_Toggle()
-    else
-      if TotemicFrame then
-        if TotemicFrame:IsShown() then
-          TotemicFrame:Hide()
-        else
-          TotemicFrame:Show()
-        end
-      end
-    end
-  end
+  if arg1 == "LeftButton" then Totemic_Toggle() end
 end)
 
 btn:SetScript("OnEnter", function()

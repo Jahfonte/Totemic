@@ -1,25 +1,5 @@
 local addonName = "Totemic"
 Totemic = {}
-local BOOKTYPE_SPELL = BOOKTYPE_SPELL or "spell"
-
-local initQueue = {}
-local isFullyLoaded = false
-
-function Totemic_QueueInit(fn)
-  if isFullyLoaded then
-    fn()
-  else
-    table.insert(initQueue, fn)
-  end
-end
-
-function Totemic_ProcessInitQueue()
-  isFullyLoaded = true
-  for i = 1, table.getn(initQueue) do
-    initQueue[i]()
-  end
-  initQueue = {}
-end
 
 local S_SUB = (string and string.sub) or (strsub)
 local S_LEN = (string and string.len) or (strlen)
@@ -174,12 +154,7 @@ local function collectKnownTotems()
     if offset and numSpells then
       for i = offset + 1, offset + numSpells do
         local success, name = pcall(function()
-          if GetSpellName then
-            return GetSpellName(i, BOOKTYPE_SPELL)
-          elseif GetSpellBookItemName then
-            return GetSpellBookItemName(i, BOOKTYPE_SPELL)
-          end
-          return nil
+          return GetSpellName and GetSpellName(i, BOOKTYPE_SPELL) or (GetSpellBookItemName and GetSpellBookItemName(i, BOOKTYPE_SPELL))
         end)
 
         if success and name and isTotemSpell(name) then
@@ -277,7 +252,7 @@ function Totemic_DeleteSet()
   sets[name] = nil
   if currentSetName == name then currentSetName = nil end
 
-  local macroName = S_SUB(name, 1, 16)
+  local macroName = string.sub(name, 1, 16)
   local macroIndex = GetMacroIndexByName(macroName)
   if macroIndex and macroIndex > 0 then
     DeleteMacro(macroIndex)
@@ -316,7 +291,7 @@ function Totemic_AutoCreateMacro()
     return
   end
 
-  local macroName = S_SUB(name, 1, 16)
+  local macroName = string.sub(name, 1, 16)
   local numGlobalMacros, numCharMacros = GetNumMacros()
   local maxMacros = 18
 
@@ -499,8 +474,6 @@ local function handleEvent(event)
     if TotemicDB.options.wasShown and TotemicFrame then
       safeFrameCall(TotemicFrame, "Show")
     end
-
-    Totemic_ProcessInitQueue()
   elseif event == "LEARNED_SPELL_IN_TAB" then
     spellScanCache = nil
     collectKnownTotems()
@@ -516,10 +489,8 @@ local function handleEvent(event)
 end
 
 eventFrame = CreateFrame("Frame", "TotemicEventFrame")
-eventFrame:SetScript("OnEvent", function(self, eventName, ...)
-  if eventName then
-    handleEvent(eventName)
-  end
+eventFrame:SetScript("OnEvent", function(self, eventName)
+  handleEvent(eventName)
 end)
 
 registerEvent("PLAYER_LOGIN")
@@ -790,24 +761,4 @@ function Totemic_SelfTest()
   end
 
   return failed == 0
-end
-
-function Totemic_ValidateAPI()
-  local required = {
-    "Totemic_Toggle",
-    "Totemic_CastCurrent",
-    "Totemic_SaveSet",
-    "Totemic_DeleteSet",
-    "Totemic_UI_Init",
-    "Totemic_GetKnownByElement",
-    "Totemic_GetCurrentSelection"
-  }
-
-  for i = 1, table.getn(required) do
-    if not _G[required[i]] then
-      DEFAULT_CHAT_FRAME:AddMessage("Totemic Error: Missing function " .. required[i], 1, 0, 0)
-      return false
-    end
-  end
-  return true
 end
