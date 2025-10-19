@@ -8,6 +8,7 @@ local S_GSUB = (string and string.gsub) or (gsub)
 local S_LOWER = (string and string.lower) or (strlower)
 
 local debugMode = false
+local BOOKTYPE_SPELL = "spell"
 
 local function safeCall(fn, ...)
   if not fn then return nil end
