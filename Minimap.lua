@@ -89,7 +89,7 @@ end)
 
 btn:SetScript("OnMouseUp", function()
   if this.isDragging then return end
-  if this.wasDragging then this.wasDragging = nil return end
+  if this.wasDragging then this.wasDragging = nil; return end
   local button = arg1 or "LeftButton"
   if button == "LeftButton" then
     if Totemic_Toggle then

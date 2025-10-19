@@ -516,8 +516,7 @@ local function handleEvent(event)
 end
 
 eventFrame = CreateFrame("Frame", "TotemicEventFrame")
-eventFrame:SetScript("OnEvent", function()
-  local eventName = event or arg1
+eventFrame:SetScript("OnEvent", function(self, eventName, ...)
   if eventName then
     handleEvent(eventName)
   end
