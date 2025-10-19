@@ -152,11 +152,12 @@ local function collectKnownTotems()
     local _, _, offset, numSpells = GetSpellTabInfo(t)
     if offset and numSpells then
       for i = offset + 1, offset + numSpells do
-        local success, name = pcall(function()
-          return GetSpellName and GetSpellName(i, BOOKTYPE_SPELL) or (GetSpellBookItemName and GetSpellBookItemName(i, BOOKTYPE_SPELL))
-        end)
+        local name = GetSpellName(i, BOOKTYPE_SPELL)
+        if not name then
+          name = GetSpellBookItemName(i, BOOKTYPE_SPELL)
+        end
 
-        if success and name and isTotemSpell(name) then
+        if name and isTotemSpell(name) then
           local el = mapSpellToElement[name]
           if el and knownByElement[el] then
             local found = false
