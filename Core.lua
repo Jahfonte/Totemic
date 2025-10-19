@@ -1,5 +1,6 @@
 local addonName = "Totemic"
 Totemic = {}
+local BOOKTYPE_SPELL = BOOKTYPE_SPELL or "spell"
 
 local initQueue = {}
 local isFullyLoaded = false
@@ -173,7 +174,12 @@ local function collectKnownTotems()
     if offset and numSpells then
       for i = offset + 1, offset + numSpells do
         local success, name = pcall(function()
-          return GetSpellName and GetSpellName(i, BOOKTYPE_SPELL) or (GetSpellBookItemName and GetSpellBookItemName(i, BOOKTYPE_SPELL))
+          if GetSpellName then
+            return GetSpellName(i, BOOKTYPE_SPELL)
+          elseif GetSpellBookItemName then
+            return GetSpellBookItemName(i, BOOKTYPE_SPELL)
+          end
+          return nil
         end)
 
         if success and name and isTotemSpell(name) then
@@ -271,7 +277,7 @@ function Totemic_DeleteSet()
   sets[name] = nil
   if currentSetName == name then currentSetName = nil end
 
-  local macroName = string.sub(name, 1, 16)
+  local macroName = S_SUB(name, 1, 16)
   local macroIndex = GetMacroIndexByName(macroName)
   if macroIndex and macroIndex > 0 then
     DeleteMacro(macroIndex)
@@ -310,7 +316,7 @@ function Totemic_AutoCreateMacro()
     return
   end
 
-  local macroName = string.sub(name, 1, 16)
+  local macroName = S_SUB(name, 1, 16)
   local numGlobalMacros, numCharMacros = GetNumMacros()
   local maxMacros = 18
 
@@ -511,7 +517,10 @@ end
 
 eventFrame = CreateFrame("Frame", "TotemicEventFrame")
 eventFrame:SetScript("OnEvent", function()
-  handleEvent(event)
+  local eventName = event or arg1
+  if eventName then
+    handleEvent(eventName)
+  end
 end)
 
 registerEvent("PLAYER_LOGIN")

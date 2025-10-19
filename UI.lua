@@ -170,9 +170,15 @@ local function createSavedSetRow(parent, index)
 
   -- Load button
   local loadBtn = createButton(nil, row, 60, 22, "Load", function()
-    local setName = this:GetParent().setName
-    if setName and Totemic_LoadSetByName then
-      Totemic_LoadSetByName(setName, false)
+    local btn = this
+    if btn and btn.GetParent then
+      local parent = btn:GetParent()
+      if parent and parent.setName then
+        local setName = parent.setName
+        if setName and Totemic_LoadSetByName then
+          Totemic_LoadSetByName(setName, false)
+        end
+      end
     end
   end)
   if loadBtn then
@@ -185,11 +191,17 @@ local function createSavedSetRow(parent, index)
 
   -- Delete button
   local deleteBtn = createButton(nil, row, 60, 22, "Delete", function()
-    local setName = this:GetParent().setName
-    if setName and TotemicSetName then
-      TotemicSetName:SetText(setName)
-      if Totemic_DeleteSet then
-        Totemic_DeleteSet()
+    local btn = this
+    if btn and btn.GetParent then
+      local parent = btn:GetParent()
+      if parent and parent.setName then
+        local setName = parent.setName
+        if setName and TotemicSetName then
+          TotemicSetName:SetText(setName)
+          if Totemic_DeleteSet then
+            Totemic_DeleteSet()
+          end
+        end
       end
     end
   end)
@@ -592,8 +604,10 @@ end
 
 function Totemic_OnLoad()
   ensureUI()
-  local alpha = (TotemicDB and TotemicDB.options and TotemicDB.options.alpha) or 1
-  TotemicFrame:SetAlpha(alpha)
+  if TotemicFrame then
+    local alpha = (TotemicDB and TotemicDB.options and TotemicDB.options.alpha) or 1
+    TotemicFrame:SetAlpha(alpha)
+  end
   Totemic_UI_UpdateAlphaLabel()
 end
 
