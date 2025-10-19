@@ -541,12 +541,16 @@ function Totemic_ApplyFramePosition()
   ensureDB()
   if not TotemicFrame then return end
   local o = TotemicDB.options.frame
-  if o and o.point and o.relPoint and o.x and o.y then
+  if o and o.point and o.x and o.y then
     TotemicFrame:ClearAllPoints()
-    TotemicFrame:SetPoint(o.point, UIParent, o.relPoint, o.x, o.y)
+    if o.relPoint then
+      TotemicFrame:SetPoint(o.point, "UIParent", o.relPoint, o.x, o.y)
+    else
+      TotemicFrame:SetPoint(o.point, o.x, o.y)
+    end
   else
     TotemicFrame:ClearAllPoints()
-    TotemicFrame:SetPoint("CENTER")
+    TotemicFrame:SetPoint("CENTER", 0, 0)
   end
 
   if o and o.width and o.height then
