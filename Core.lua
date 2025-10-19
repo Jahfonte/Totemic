@@ -11,8 +11,7 @@ local debugMode = false
 
 local function safeCall(fn, ...)
   if not fn then return nil end
-  local args = {...}
-  local success, result = pcall(fn, unpack(args))
+  local success, result = pcall(fn, unpack(arg))
   if not success then
     if debugMode then
       DEFAULT_CHAT_FRAME:AddMessage("Totemic Error: " .. tostring(result), 1, 0.5, 0.5)
@@ -30,8 +29,7 @@ end
 
 local function safeFrameCall(frame, method, ...)
   if not frame or not frame[method] then return nil end
-  local args = {...}
-  local success, result = pcall(frame[method], frame, unpack(args))
+  local success, result = pcall(frame[method], frame, unpack(arg))
   if not success then
     if debugMode then
       DEFAULT_CHAT_FRAME:AddMessage("Totemic Frame Error: " .. tostring(result), 1, 0.5, 0.5)
